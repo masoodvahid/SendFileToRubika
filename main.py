@@ -2,15 +2,10 @@ from rubpy import Client
 from tqdm import tqdm
 import requests
 import os
-
-# Replace with your actual authentication token
-auth_token = 'Auth Token'
+import time
 
 # Replace with your actual channel ID
-channel_id = 'CHANNEL ID'
-
-# The message you want to send
-content = '`hello` __from__ **rubpy**'
+channel_id = 'PLACE YOU CID'
 
 def download_video_with_progress(url, output_path):
     try:
@@ -45,19 +40,39 @@ def upload_video_with_progress(client, channel_id, video_path):
             # For example, using requests.post or similar
             # requests.post(upload_url, data=chunk)
             # Since we don't have the actual upload URL or method, this is a placeholder
+            time.sleep(0.001)  # Add a small delay to reduce CPU usage
     t.close()
 
-def send_video_with_progress(client, channel_id, video_url):
-    temp_video_path = 'temp_video.mp4'
-    download_video_with_progress(video_url, temp_video_path)
-    upload_video_with_progress(client, channel_id, temp_video_path)
-    os.remove(temp_video_path)
+    # Simulate the actual upload process
+    try:
+        client.send_video(channel_id, video_path)
+        print("Video sent successfully")
+    except Exception as e:
+        print(f"Error sending video: {e}")
+
+def send_video_with_progress(client, channel_id, video_path):
+    upload_video_with_progress(client, channel_id, video_path)
 
 def main():
-    video_url = input("Please enter the video URL: ")
-
     with Client("Rubika", auth=auth_token, display_welcome=False) as rubika:
-        send_video_with_progress(rubika, channel_id, video_url)
+        while True:
+            choice = input("Local OR URL? (local/url/exit): ").lower()
+            if choice == 'exit':
+                break
+            elif choice == 'local':
+                video_path = input("Please enter the path to the local video file: ")
+                if os.path.exists(video_path):
+                    send_video_with_progress(rubika, channel_id, video_path)
+                else:
+                    print("File not found. Please try again.")
+            elif choice == 'url':
+                video_url = input("Please enter the video URL: ")
+                temp_video_path = 'temp_video.mp4'
+                download_video_with_progress(video_url, temp_video_path)
+                send_video_with_progress(rubika, channel_id, temp_video_path)
+                os.remove(temp_video_path)
+            else:
+                print("Invalid choice. Please enter 'local', 'url', or 'exit'.")
 
 if __name__ == '__main__':
     main()
