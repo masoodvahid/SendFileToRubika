@@ -5,7 +5,7 @@ import os
 import time
 
 # Replace with your actual channel ID
-channel_id = 'PLACE YOU CID'
+channel_id = 'Channel ID'
 
 def download_video_with_progress(url, output_path):
     try:
@@ -54,7 +54,7 @@ def send_video_with_progress(client, channel_id, video_path):
     upload_video_with_progress(client, channel_id, video_path)
 
 def main():
-    with Client("Rubika", auth=auth_token, display_welcome=False) as rubika:
+    with Client("Rubika", display_welcome=False) as rubika:
         while True:
             choice = input("Local OR URL? (local/url/exit): ").lower()
             if choice == 'exit':
